@@ -12,7 +12,7 @@ let proxyIP = proxyIPs[Math.floor(Math.random() * proxyIPs.length)];
 
 let dohURL = 'https://cloudflare-dns.com/dns-query';
 
-let panelVersion = '2.3.5';
+let panelVersion = '3.0.0';
 
 if (!isValidUUID(userID)) {
     throw new Error('uuid is not valid');
@@ -114,7 +114,7 @@ export default {
 
                         let secretKey = await env.bpb.get('secretKey');
                         const pwd = await env.bpb.get('pwd');
-                        if (!pwd) await env.bpb.put('pwd', '!@#Pass!@#123Nazi');
+                        if (!pwd) await env.bpb.put('pwd', 'Pass@123456!@#');
 
                         if (!secretKey) {
                             secretKey = generateSecretKey();
@@ -244,7 +244,7 @@ async function vlessOverWSHandler(request) {
 			const {
 				hasError,
 				message,
-				portRemote = 443,
+				portRemote = 2087,
 				addressRemote = '',
 				rawDataIndex,
 				vlessVersion = new Uint8Array([0, 0]),
@@ -269,7 +269,7 @@ async function vlessOverWSHandler(request) {
 				isDns = true;
 			}
 
-			// ["version", "附加信息长度 N"]
+			// ["version", " N"]
 			const vlessResponseHeader = new Uint8Array([vlessVersion[0], 0]);
 			const rawClientData = chunk.slice(rawDataIndex);
 
@@ -787,7 +787,7 @@ const getNormalConfigs = async (env, hostName, client) => {
         let remark = `MyVPS - ${addr}`;
         remark = remark.length <= 30 ? remark : `${remark.slice(0,29)}...`;
 
-        vlessWsTls += 'vless' + `://${userID}@${addr}:443?encryption=none&security=tls&type=ws&host=${
+        vlessWsTls += 'vless' + `://${userID}@${addr}:2087?encryption=none&security=tls&type=ws&host=${
             randomUpperCase(hostName)
         }&sni=${
             randomUpperCase(hostName)
@@ -1013,7 +1013,7 @@ const getFragmentConfigs = async (env, hostName, client) => {
         delete outbound.streamSettings.realitySettings;
         delete outbound.streamSettings.tcpSettings;
         outbound.settings.vnext[0].address = addr;
-        outbound.settings.vnext[0].port = 443;
+        outbound.settings.vnext[0].port = 2087;
         outbound.settings.vnext[0].users[0].id = userID;
         outbound.streamSettings.tlsSettings.serverName = randomUpperCase(hostName);
         outbound.streamSettings.wsSettings.headers.Host = randomUpperCase(hostName);
@@ -1136,10 +1136,10 @@ const updateDataset = async (env, Settings) => {
     const proxySettings = {
         remoteDNS: Settings?.get('remoteDNS') || 'https://94.140.14.14/dns-query',
         localDNS: Settings?.get('localDNS') || '8.8.8.8',
-        lengthMin: Settings?.get('fragmentLengthMin') || '100',
-        lengthMax: Settings?.get('fragmentLengthMax') || '200',
-        intervalMin: Settings?.get('fragmentIntervalMin') || '5',
-        intervalMax: Settings?.get('fragmentIntervalMax') || '10',
+        lengthMin: Settings?.get('fragmentLengthMin') || '13',
+        lengthMax: Settings?.get('fragmentLengthMax') || '25',
+        intervalMin: Settings?.get('fragmentIntervalMin') || '4',
+        intervalMax: Settings?.get('fragmentIntervalMax') || '8',
         blockAds: Settings?.get('block-ads') || false,
         bypassIran: Settings?.get('bypass-iran') || false,
         blockPorn: Settings?.get('block-porn') || false,
@@ -1757,8 +1757,6 @@ const renderHomePage = async (request, env, hostName, fragConfigs) => {
             </div>
             <hr>
             <div class="footer">
-                <i class="fa fa-github" style="font-size:36px; margin-right: 10px;"></i>
-                <a class="link" href="https://github.com/bia-pain-bache/BPB-Worker-Panel" target="_blank">Github</a>
                 <button id="openModalBtn" class="button">Change Password</button>
                 <button type="button" id="logout" style="background: none; margin: 0; border: none; cursor: pointer;">
                     <i class="fa fa-power-off fa-2x" aria-hidden="true"></i>
@@ -2291,7 +2289,7 @@ const xrayOutboundTemp =
         vnext: [
             {
                 address: "",
-                port: 443,
+                port: 2087,
                 users: [
                     {
                         encryption: "none",
@@ -2468,7 +2466,7 @@ const singboxConfigTemp = {
             },
             {
                 network: "udp",
-                port: 443,
+                port: 2087,
                 port_range: [],
                 outbound: "block"
             },
@@ -2574,7 +2572,7 @@ const singboxConfigTemp = {
 const singboxOutboundTemp = {
     type: "vless",
     server: "",
-    server_port: 443,
+    server_port: 2087,
     uuid: "",
     domain_strategy: "prefer_ipv6",
     packet_encoding: "",
